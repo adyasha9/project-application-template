@@ -16,8 +16,6 @@ The application uses `poetry_issues_all.json`. The smaller export is retained fo
 | Open bug-labeled issues | 164 |
 | Recorded comment events | 29,461 |
 
-**Historical reference:** October 20, 2024, the latest recorded activity—not a verified export timestamp. Results describe the exported snapshot, not current GitHub state.
-
 ## Features
 
 - **Overview:** open, closed, and bug-labeled totals.
@@ -123,18 +121,18 @@ Source JSON remains unchanged. SQLite stores the active snapshot and separate ma
 
 ### Diagrams
 
-> **Original template component diagram — insert here**  
+> **Original template component diagram**  
 > Asset: `team_5_component_diagram_before.svg.svg`
 
-> **Proposed template extension — insert here**  
+> **Proposed template extension**  
 > Asset: `team_5_component_diagram_after.svg.svg`
 
-> **Proposed contributor-analysis sequence — insert here**  
+> **Proposed contributor-analysis sequence**  
 > Asset: `team_5_sequence_diagram.svg.svg`
 
 The proposed diagrams reference planned command-line modules, not the current dashboard.
 
-> **Current dashboard architecture — insert updated diagram here**  
+> **Current dashboard architecture**  
 > JSON import → normalization → SQLite → API → dashboard
 
 ## Run Locally
@@ -142,8 +140,6 @@ The proposed diagrams reference planned command-line modules, not the current da
 ### Dashboard
 
 Requires Python 3.10+ and a modern browser. No third-party Python packages are needed.
-
-From the application directory, replace the dataset path and run:
 
 ```sh
 python3 app.py \
@@ -185,4 +181,3 @@ The discussion trends analysis was checked by running it on `poetry_issues_all.j
 
 Live synchronization, stronger assignment-history coverage, contributor analysis, and production hosting with access control.
 
-**Current scope:** a local, single-user historical analytics tool.
