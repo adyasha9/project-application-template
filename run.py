@@ -5,7 +5,7 @@ Features:
     0: Original example analysis
     1: Reserved for the first project analysis
     2: Contributor activity analysis
-    3: Reserved for the third project analysis
+    3: Discussion trends analysis
 
 Contributor activity generates CSV and PNG reports by default.
 """
@@ -27,7 +27,7 @@ def parse_args(argv=None):
         type=int,
         choices=(0, 1, 2, 3),
         required=True,
-        help="0: example; 2: contributors; 1 and 3: reserved",
+        help="0: example; 1: reserved; 2: contributors; 3: discussion trends",
     )
 
     ap.add_argument(
@@ -197,10 +197,9 @@ def main(argv=None):
             run_contributor_analysis(args)
 
         elif args.feature == 3:
-            raise ValueError(
-                "Feature 3 is not implemented. "
-                "Connect its analysis module before using it."
-            )
+            from discussion_trend_analysis import DiscussionTrends
+
+            DiscussionTrends().run()
 
     except (OSError, ValueError, RuntimeError, ImportError) as exc:
         raise SystemExit(f"Analysis failed: {exc}") from exc
