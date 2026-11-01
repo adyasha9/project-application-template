@@ -1,3 +1,5 @@
 python-dateutil
 pandas
 matplotlib
+# Required only for PNG exports. CSV, JSON and dashboard calculations use stdlib.
+matplotlib>=3.9,<4
