@@ -216,8 +216,35 @@ def _png_bytes(report):
     return output.getvalue()
 
 
+def versioned_export_paths(csv_path=None, png_path=None):
+    """Choose the first available shared suffix; preserve all previous reports."""
+    originals = [Path(p) if p is not None else None for p in (csv_path, png_path)]
+    resolved = [p.resolve() for p in originals if p is not None]
+    if len(resolved) != len(set(resolved)):
+        raise ValueError('CSV and PNG destinations must be different')
+    for path in originals:
+        if path is None:
+            continue
+        if path.is_dir():
+            raise IsADirectoryError(f'Output is a directory: {path}')
+        if not path.parent.is_dir():
+            raise FileNotFoundError(f'Output directory does not exist: {path.parent}')
+    number = 1
+    while True:
+        candidates = [None if p is None else p if number == 1 else
+                      p.with_name(f'{p.stem}_{number}{p.suffix}') for p in originals]
+        if not any(p is not None and (p.exists() or p.is_symlink()) for p in candidates):
+            return tuple(candidates)
+        number += 1
+
+
 def export_report(report, *, csv_path=None, png_path=None):
-    """Render first, then exclusively create outputs. Writes are not a multi-file transaction."""
+    """Number occupied destinations, render, then exclusively create new reports.
+
+    Both formats use the same suffix. Concurrent filename collisions still fail
+    safely rather than overwriting. Writes are not a multi-file transaction.
+    """
+    csv_path, png_path = versioned_export_paths(csv_path, png_path)
     requests = []
     if csv_path is not None: requests.append((Path(csv_path), _csv_bytes))
     if png_path is not None: requests.append((Path(png_path), _png_bytes))
