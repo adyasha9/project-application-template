@@ -200,11 +200,6 @@ If no issues fall inside the range, the program prints a message and exits witho
 
 | Output | Description |
 |---|---|
-| Terminal summary | Issues analyzed, eligible contributors, observed response sample count, rejected records, and saved file locations |
-| `contributor_activity.png` | Summary cards and charts showing monthly participation, current ownership, response-target outcomes, and quiet open backlog |
-| `contributor_activity.csv` | One row per contributor with reporting, discussion, triage, ownership, response timing, and health metrics, plus analysis settings |
-| Terminal summary | Totals, busiest month for issues, busiest month for comments, average comments per issue |
-| Terminal table | Issues and comments for every month in the range |
 | `discussion_trends.png` | Line chart of issues created and comments posted per month, plus a second panel of comments per issue |
 | `discussion_trends.csv` | The monthly table, for use in a spreadsheet |
 
