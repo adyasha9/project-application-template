@@ -2,30 +2,25 @@
 
 Tools for exploring Poetry’s GitHub issues: what remains open, where work is aging, and how discussion has changed over time.
 
-Built from the ENPM611 project template, the project has two parts:
-
-- **Dashboard:** an interactive web app for searching, filtering, and classifying issues.
-- **Command-line analyses:** analyses run through `run.py` with a `--feature` flag.
+Built from the ENPM611 project template, it provides three command-line analyses run through `run.py` with a `--feature` flag.
 
 ## Contents
 
 - [Dataset](#dataset)
-- [Dashboard](#dashboard)
 - [Command-Line Analyses](#command-line-analyses)
   - [Setup](#setup)
   - [Feature 1: Label Resolution](#feature-1-label-resolution)
-  - [Feature 2: Contributor Activity](#feature-2-contributor-activity)
+  - [Feature 2: Contributor Activity](#feature-2-contributor-activity-and-backlog-health)
   - [Feature 3: Discussion Trends](#feature-3-discussion-trends)
 - [Interpreting the Data](#interpreting-the-data)
 - [Architecture](#architecture)
-- [Run the Dashboard](#run-the-dashboard)
 - [Verification](#verification)
 - [Team Contributions](#team-contributions)
 - [Next Steps](#next-steps)
 
 ## Dataset
 
-Both parts use `poetry_issues_all.json`. The smaller export is retained for validation; the files are not combined because their issue numbers overlap.
+The analyses use `poetry_issues_all.json`, downloaded from Canvas. The data file is not stored in this repository; see [Setup](#setup) for how to point the program at it.
 
 | Metric | Count |
 |---|---:|
@@ -35,18 +30,6 @@ Both parts use `poetry_issues_all.json`. The smaller export is retained for vali
 | Open bug-labeled issues | 164 |
 | Recorded comment events | 29,461 |
 
-## Dashboard
-
-- **Overview:** open, closed, and bug-labeled totals.
-- **Issue explorer:** search and filter by state, type, severity, ownership, and age.
-- **Backlog aging:** clickable age bands reveal long-waiting issues.
-- **Monthly trends:** compare issue creation and final recorded closures.
-- **Calendar heat map:** explore daily creation activity by year.
-- **Issue details:** descriptions, comments, recorded timelines, and GitHub links.
-- **Manual severity:** save Critical, Major, Minor, or Unclassified locally.
-
-All dashboard visualizations follow the dashboard filters. To start it, see [Run the Dashboard](#run-the-dashboard).
-
 ## Command-Line Analyses
 
 Each analysis is selected with `python run.py --feature N`.
@@ -54,7 +37,7 @@ Each analysis is selected with `python run.py --feature N`.
 | Feature | Analysis | Details |
 |---:|---|---|
 | 1 | Label resolution time | [Feature 1](#feature-1-label-resolution) |
-| 2 | Contributor Activity and Backlog Health | [Feature 2](#feature-2-contributor-activity) |
+| 2 | Contributor Activity and Backlog Health | [Feature 2](#feature-2-contributor-activity-and-backlog-health) |
 | 3 | Monthly discussion trends | [Feature 3](#feature-3-discussion-trends) |
 
 ### Setup
@@ -166,6 +149,16 @@ python run.py --feature 2 \
   --end-date 2023-12-31
 ```
 
+**Outputs**
+
+| Output | Description |
+|---|---|
+| Terminal summary | Issues analyzed, eligible contributors, observed response sample count, rejected records, and saved file locations |
+| `contributor_activity.png` | Summary cards and charts showing monthly participation, current ownership, response-target outcomes, and quiet open backlog |
+| `contributor_activity.csv` | One row per contributor with reporting, discussion, triage, ownership, response timing, and health metrics, plus analysis settings |
+
+Files are written to the directory you run the command from. If they already exist, the next run saves numbered copies (`contributor_activity_2.csv`, `contributor_activity_2.png`, and so on) instead of overwriting.
+
 ### Feature 3: Discussion Trends
 
 Shows how much discussion Poetry’s issue tracker generated over time.
@@ -224,9 +217,7 @@ Across 5,573 issues and 29,461 comments over 81 months (February 2018 to October
 
 ## Interpreting the Data
 
-**Issue type and severity answer different questions.** Type describes the work; severity describes its impact. Types come from explicit labels. The export contains no task/project or severity labels, so these classifications are not inferred.
-
-Manual severity choices update the dashboard, persist across restarts, and remain separate from GitHub labels. They can be removed to restore the original classification.
+**Historical reference:** October 20, 2024, the latest recorded activity—not a verified export timestamp. Results describe the exported snapshot, not current GitHub state.
 
 Three distinctions matter:
 
@@ -245,62 +236,34 @@ Open-issue age is measured at the historical reference. Closed duration runs fro
 | `contributor_health_metrics.py` | Analyze response-target outcomes, observed assignment delays, quiet backlog, and contributor history |
 | `contributor_activity_exports.py` | Generate the contributor CSV report and PNG charts |
 | `analytics.py` | Normalize issue records and parse timestamps for shared analysis |
-| `data_loader.py`, `model.py`, `config.py` | Load template issue/event objects and provide configuration settings |
-| `reports/` | Store generated CSV and PNG reports when selected as the output directory |
-| `analytics.py` | Normalize data, classify issues, and calculate metrics |
-| `app.py` | Serve the dashboard and API; manage SQLite storage Command-line entry point; `--feature 2` selects Contributor Activity and Backlog Health |
-| `web/` | Dashboard interface, interactions, and styling |
 | `run.py` | Command-line entry point; `--feature` selects the analysis to run |
 | `label_resolution_analysis.py` | Label resolution analysis (feature 1) |
 | `discussion_trend_analysis.py` | Discussion trends analysis (feature 3) |
 | `data_loader.py`, `model.py`, `config.py` | Template utilities that load the JSON into `Issue` and `Event` objects and read configuration |
-| `tests/` | Metric, persistence, classification, and calendar checks |
+| `tests/` | Unit tests for contributor report file numbering |
 
-For the dashboard, source JSON remains unchanged; SQLite stores the active snapshot and separate manual severity overrides. The command-line analyses read the JSON directly and do not use SQLite.
+All analyses read the JSON data file directly; the source data is never modified.
 
 ### Diagrams
 
 > **Original template component diagram**  
-> Asset: `team_5_component_diagram_before.svg.svg`
+> Asset: `diagram/team_5_component_diagram_before.svg.svg`
 
 > **Proposed template extension**  
-> Asset: `team_5_component_diagram_after.svg.svg`
+> Asset: `diagram/team_5_component_diagram_after.svg.svg`
 
 > **Proposed contributor-analysis sequence**  
-> Asset: `team_5_sequence_diagram.svg.svg`
+> Asset: `diagram/team_5_sequence_diagram.svg.svg`
 
-The proposed diagrams reference planned command-line modules, not the current dashboard.
-
-> **Current dashboard architecture**  
-> JSON import → normalization → SQLite → API → dashboard
-
-## Run the Dashboard
-
-Requires Python 3.10+ and a modern browser. No third-party Python packages are needed.
-
-```sh
-python3 app.py \
-  --data /path/to/poetry_issues_all.json \
-  --observed-at 2024-10-20T17:19:04+00:00
-```
-
-Open **http://127.0.0.1:8765/**.
-
-For later sessions, run `python3 app.py` to reuse stored data. Stop with `Ctrl+C`.
-
-A new import replaces the active snapshot. Back up `issues.sqlite3` to preserve manual classifications.
-
-**Historical reference:** October 20, 2024, the latest recorded activity—not a verified export timestamp. Results describe the exported snapshot, not current GitHub state.
+The diagrams were created in Milestone 1 and show the planned design; the final implementation adds supporting modules for feature 2.
 
 ## Verification
 
 ```sh
 python3 -m unittest discover -s tests -v
-node tests/test_calendar.cjs
-node --check web/app.js
 ```
 
-Thirteen Python tests and the JavaScript calendar checks passed during development. Browser visual and interaction verification remains pending.
+Seven unit tests cover the contributor report file numbering and pass.
 
 The discussion trends analysis was checked by running it on `poetry_issues_all.json`: the totals (5,573 issues and 29,461 comments) match the dataset table above, and the date filter and empty-range cases behave as described. It has no automated tests yet.
 
@@ -316,6 +279,6 @@ The label resolution analysis was checked by running it on `poetry_issues_all.js
 
 ## Next Steps
 
-Live synchronization, stronger assignment-history coverage, contributor analysis, and production hosting with access control.
+Automated tests for the label resolution and discussion trends analyses, and stronger assignment-history coverage.
 
-**Current scope:** a local, single-user historical analytics tool.
+**Current scope:** a local, command-line historical analytics tool.
