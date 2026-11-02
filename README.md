@@ -135,6 +135,9 @@ If no issues fall inside the range, the program prints a message and exits witho
 
 | Output | Description |
 |---|---|
+| Terminal summary | Issues analyzed, eligible contributors, observed response sample count, rejected records, and saved file locations |
+| `contributor_activity.png` | Summary cards and charts showing monthly participation, current ownership, response-target outcomes, and quiet open backlog |
+| `contributor_activity.csv` | One row per contributor with reporting, discussion, triage, ownership, response timing, and health metrics, plus analysis settings |
 | Terminal summary | Totals, busiest month for issues, busiest month for comments, average comments per issue |
 | Terminal table | Issues and comments for every month in the range |
 | `discussion_trends.png` | Line chart of issues created and comments posted per month, plus a second panel of comments per issue |
@@ -177,8 +180,15 @@ Open-issue age is measured at the historical reference. Closed duration runs fro
 
 | Component | Purpose |
 |---|---|
+| `contributor_activity_analysis.py` | Coordinate configuration, data loading, analysis, and report exports |
+| `contributor_metrics.py` | Calculate participation, response timing, monthly activity, and ownership concentration |
+| `contributor_health_metrics.py` | Analyze response-target outcomes, observed assignment delays, quiet backlog, and contributor history |
+| `contributor_activity_exports.py` | Generate the contributor CSV report and PNG charts |
+| `analytics.py` | Normalize issue records and parse timestamps for shared analysis |
+| `data_loader.py`, `model.py`, `config.py` | Load template issue/event objects and provide configuration settings |
+| `reports/` | Store generated CSV and PNG reports when selected as the output directory |
 | `analytics.py` | Normalize data, classify issues, and calculate metrics |
-| `app.py` | Serve the dashboard and API; manage SQLite storage |
+| `app.py` | Serve the dashboard and API; manage SQLite storage Command-line entry point; `--feature 2` selects Contributor Activity and Backlog Health |
 | `web/` | Dashboard interface, interactions, and styling |
 | `run.py` | Command-line entry point; `--feature` selects the analysis to run |
 | `discussion_trend_analysis.py` | Discussion trends analysis (feature 3) |
