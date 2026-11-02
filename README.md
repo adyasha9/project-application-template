@@ -20,6 +20,7 @@ Built from the ENPM611 project template, the project has two parts:
 - [Architecture](#architecture)
 - [Run the Dashboard](#run-the-dashboard)
 - [Verification](#verification)
+- [Team Contributions](#team-contributions)
 - [Next Steps](#next-steps)
 
 ## Dataset
@@ -309,6 +310,14 @@ Thirteen Python tests and the JavaScript calendar checks passed during developme
 The discussion trends analysis was checked by running it on `poetry_issues_all.json`: the totals (5,573 issues and 29,461 comments) match the dataset table above, and the date filter and empty-range cases behave as described. It has no automated tests yet.
 
 The label resolution analysis was checked by running it on `poetry_issues_all.json`, including the single-label view (`--label kind/bug`) and an unknown label (`--label xyz`), which prints a message instead of failing. It has no automated tests yet.
+
+## Team Contributions
+
+| Member | Contributions |
+|---|---|
+| Darsh Savani | Feature 1: label resolution analysis (`label_resolution_analysis.py`); connected Feature 1 to `run.py`; Feature 1 README section |
+| Adyasha Mishra | Created the team fork; Feature 3: discussion trends analysis (`discussion_trend_analysis.py`); README revisions; reviewed and merged pull requests |
+| Andrew Foday | Feature 2: contributor activity analysis (`contributor_activity_analysis.py` and supporting modules); repository restructuring; README updates |
 
 ## Next Steps
 
