@@ -13,7 +13,7 @@ Built from the ENPM611 project template, the project has two parts:
 - [Dashboard](#dashboard)
 - [Command-Line Analyses](#command-line-analyses)
   - [Setup](#setup)
-  - [Feature 2](#feature-2)
+  - [Feature 2: Contributor Activity](#feature-2-contributor-activity)
   - [Feature 3: Discussion Trends](#feature-3-discussion-trends)
 - [Interpreting the Data](#interpreting-the-data)
 - [Architecture](#architecture)
@@ -51,7 +51,7 @@ Each analysis is selected with `python run.py --feature N`.
 
 | Feature | Analysis | Details |
 |---:|---|---|
-| 2 | _TODO: name of feature 2_ | [Feature 2](#feature-2) |
+| 2 | Contributor Activity and Backlog Health | [Feature 2](#feature-2-contributor-activity) |
 | 3 | Monthly discussion trends | [Feature 3](#feature-3-discussion-trends) |
 
 ### Setup
@@ -72,10 +72,34 @@ export ENPM611_PROJECT_DATA_PATH="/path/to/poetry_issues_all.json"
 
 or by setting `ENPM611_PROJECT_DATA_PATH` in `config.json`.
 
-### Feature 2
+### Feature 2: Contributor Activity and Backlog Health
 
-_TODO (feature 2 author): describe what the analysis does, how to run it
-(`python run.py --feature 2 ...`), its outputs, and any options._
+Shows who participates in Poetry’s issue tracker, how quickly issues receive responses, and where open work needs attention.
+
+**What it does**
+
+1. Filters contributor activity by an optional date range and excludes recognized bots by default.
+2. Separately counts issues reported, issues discussed, comments, and recorded triage actions for each contributor.
+3. Summarizes monthly participation and how concentrated discussion and current ownership are.
+4. Calculates median and 90th-percentile first external response times and compares observed responses with a configurable review target.
+5. Identifies aging assignments and quiet open issues, including those without a current owner.
+6. Prints an analysis summary and saves contributor metrics to CSV and visualizations to PNG.
+
+Date filters apply to activity; current ownership and quiet-backlog metrics describe the full snapshot. Incomplete timelines limit conclusions, and participation counts do not establish productivity or who fixed an issue.
+
+**Run**
+
+```sh
+python run.py --feature 2
+```
+
+Optional date range (inclusive, `YYYY-MM-DD`):
+
+```sh
+python run.py --feature 2 \
+  --start-date 2022-01-01 \
+  --end-date 2023-12-31
+```
 
 ### Feature 3: Discussion Trends
 
