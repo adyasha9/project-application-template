@@ -3,7 +3,7 @@ Application entry point.
 
 Features:
     0: Original example analysis
-    1: Reserved for the first project analysis
+    1: Label resolution analysis
     2: Contributor activity analysis
     3: Discussion trends analysis
 
@@ -27,7 +27,7 @@ def parse_args(argv=None):
         type=int,
         choices=(0, 1, 2, 3),
         required=True,
-        help="0: example; 1: reserved; 2: contributors; 3: discussion trends",
+        help="0: example; 1: label resolution; 2: contributors; 3: discussion trends",
     )
 
     ap.add_argument(
@@ -188,10 +188,9 @@ def main(argv=None):
             ExampleAnalysis().run()
 
         elif args.feature == 1:
-            raise ValueError(
-                "Feature 1 is not implemented. "
-                "Connect its analysis module before using it."
-            )
+            from label_resolution_analysis import LabelResolutionAnalysis
+
+            LabelResolutionAnalysis().run()
 
         elif args.feature == 2:
             run_contributor_analysis(args)

@@ -13,6 +13,7 @@ Built from the ENPM611 project template, the project has two parts:
 - [Dashboard](#dashboard)
 - [Command-Line Analyses](#command-line-analyses)
   - [Setup](#setup)
+  - [Feature 1: Label Resolution](#feature-1-label-resolution)
   - [Feature 2: Contributor Activity](#feature-2-contributor-activity)
   - [Feature 3: Discussion Trends](#feature-3-discussion-trends)
 - [Interpreting the Data](#interpreting-the-data)
@@ -51,6 +52,7 @@ Each analysis is selected with `python run.py --feature N`.
 
 | Feature | Analysis | Details |
 |---:|---|---|
+| 1 | Label resolution time | [Feature 1](#feature-1-label-resolution) |
 | 2 | Contributor Activity and Backlog Health | [Feature 2](#feature-2-contributor-activity) |
 | 3 | Monthly discussion trends | [Feature 3](#feature-3-discussion-trends) |
 
@@ -71,6 +73,68 @@ export ENPM611_PROJECT_DATA_PATH="/path/to/poetry_issues_all.json"
 ```
 
 or by setting `ENPM611_PROJECT_DATA_PATH` in `config.json`.
+
+### Feature 1: Label Resolution
+
+Answers the question: **which kinds of issues (by label) take the longest to resolve, and how many are still open?**
+
+**What it does**
+
+1. Loads all issues through the template `DataLoader`.
+2. For each closed issue, computes the resolution time: days from `created_date` to the **final** recorded `closed` event.
+3. Groups issues by label. An issue with several labels counts toward each of them.
+4. For each label, calculates the number of issues, the share still open, and the **median** and mean resolution time. The median is used for ranking because a few issues stayed open for years and would distort the average.
+5. Keeps labels with at least 20 issues, ranks them from slowest to fastest, prints the 15 slowest, and opens a bar chart.
+
+**How to run**
+
+After the [setup](#setup):
+
+```sh
+python run.py --feature 1
+```
+
+Optional detail for one label (names must match the dataset exactly, for example `kind/bug`, `area/docs`, `status/triage`):
+
+```sh
+python run.py --feature 1 --label kind/bug
+```
+
+If the label is not found, the program prints a message and lists common labels instead of failing.
+
+**Outputs**
+
+| Output | Description |
+|---|---|
+| Terminal table | For the 15 slowest labels: number of issues, % still open, median days to close |
+| Terminal finding | One sentence naming the slowest and fastest label in the table |
+| Bar chart (window) | Median days from creation to close for each label; close the window to finish |
+| Label detail (`--label`) | Issue count, open/closed split, % open, median and mean resolution days for that label |
+
+No files are written; use the chart window's save button to keep a copy of the chart.
+
+Example (`--label kind/bug`):
+
+```text
+Label: kind/bug
+  Issues: 2860 (open 164, closed 2696, 5.7% open)
+  Median resolution: 6.7 days
+  Mean resolution:   141.9 days (based on 2581 closed issues)
+```
+
+**Results on the full dataset**
+
+- Slowest labels (median days to close): `area/error-handling` (692), `area/ux` (503), `area/publishing` (376), `kind/enhancement` (363).
+- Fastest labels in the chart: `kind/feature` (50) and `area/core` (53).
+- `kind/bug` issues close faster than any label in the chart: a median of 6.7 days, with only 5.7% still open.
+- Finding: defects are handled quickly, while improvements to error messages, user experience, and publishing wait one to two years.
+
+**Edge cases and notes**
+
+- Open issues count toward the open share but not toward resolution time.
+- Closed issues with no recorded `closed` event or no creation date are excluded from resolution time.
+- Labels with fewer than 20 issues are left out of the table and chart to avoid small-sample results; they can still be inspected with `--label`.
+- "Closed" does not necessarily mean "fixed": duplicates and declined requests are also closed.
 
 ### Feature 2: Contributor Activity and Backlog Health
 
@@ -191,6 +255,7 @@ Open-issue age is measured at the historical reference. Closed duration runs fro
 | `app.py` | Serve the dashboard and API; manage SQLite storage Command-line entry point; `--feature 2` selects Contributor Activity and Backlog Health |
 | `web/` | Dashboard interface, interactions, and styling |
 | `run.py` | Command-line entry point; `--feature` selects the analysis to run |
+| `label_resolution_analysis.py` | Label resolution analysis (feature 1) |
 | `discussion_trend_analysis.py` | Discussion trends analysis (feature 3) |
 | `data_loader.py`, `model.py`, `config.py` | Template utilities that load the JSON into `Issue` and `Event` objects and read configuration |
 | `tests/` | Metric, persistence, classification, and calendar checks |
@@ -242,6 +307,8 @@ node --check web/app.js
 Thirteen Python tests and the JavaScript calendar checks passed during development. Browser visual and interaction verification remains pending.
 
 The discussion trends analysis was checked by running it on `poetry_issues_all.json`: the totals (5,573 issues and 29,461 comments) match the dataset table above, and the date filter and empty-range cases behave as described. It has no automated tests yet.
+
+The label resolution analysis was checked by running it on `poetry_issues_all.json`, including the single-label view (`--label kind/bug`) and an unknown label (`--label xyz`), which prints a message instead of failing. It has no automated tests yet.
 
 ## Next Steps
 
